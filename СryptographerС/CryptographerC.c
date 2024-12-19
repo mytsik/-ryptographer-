@@ -14,51 +14,71 @@ int OverUnderBorder(int length, int index) //когда нужный индекс выходит за пред
 
 int Vigenere()
 {
+
     printf("\nВведите текст, который хотите зашифровать:\n");
-    char textToEncode[LEN];
-    fgets(textToEncode, LEN, stdin);
-    textToEncode[strcspn(textToEncode, "\n")] = '\0';  // Удаляем символ новой строки, если он есть
+    char text[LEN];
+    fgets(text, LEN, stdin);
+    text[strcspn(text, "\n")] = '\0';  // Удаляем символ новой строки, если он есть
 
     // Ввод ключа
-    printf("\nВведите слово, которое юудет использоваться в качестве ключа шифрования\n");
-    char keyword[LEN];
-    fgets(keyword, LEN, stdin);
-    keyword[strcspn(keyword, "\n")] = '\0';  // Удаляем символ новой строки, если он есть
+    printf("\nВведите слово, которое будет использоваться в качестве ключа шифрования\n");
+    char key[LEN];
+    fgets(key, LEN, stdin);
+    key[strcspn(key, "\n")] = '\0';  // Удаляем символ новой строки, если он есть
 
-    int textLen = strlen(textToEncode);
-    int keyLen = strlen(keyword);
+    int text_len = strlen(text);
+    int key_len = strlen(key);
+    
+
+    char result_key[] = "";
+    char result[] = "";
+
+    //int res_key_len = strlen(result_key);
+    //for (int i = 0; i < res_key_len; i++) // удаляю символы М
+    //    result_key[i] = '\0';
+
     int i, j;
-
-    char newKey[SIZE];
-    char encryptedText[SIZE];
-
     // Новый ключ
-    for (i = 0, j = 0; i < textLen; ++i, ++j) 
+    for (i = 0, j = 0; i < text_len; ++i) 
     {
-        if (j == keyLen) 
+        if (j == key_len)  
+            j = 0; //если дошли до конца ключа то начать сначала
+
+        if (text[i] != ' ')
         {
-            j = 0;
+            char key_j[] = { key[j] , '\0' };
+            strcat(result_key, key_j);
+            j += 1;
         }
-        newKey[i] = keyword[j];
+        else
+            strcat(result_key, " ");       
     }
-    newKey[i] = '\0';  // Завершаем строку новым ключом
+    result_key[i] = '\0';
+      
 
     // Шифровка
-    for (i = 0; i < textLen; i++) 
+    for (i = 0; i < text_len; i++) 
     {
-        if (textToEncode[i] != ' ') {
-            encryptedText[i] = (((textToEncode[i] - 'a') + (newKey[i] - 'a')) % 26) + 'a'; // Шифрование
-        }
-        else {
-            encryptedText[i] = ' '; // Пробел остаётся неизменным
-        }
+        if (text[i] == ' ')
+        {
+            result[i] = ' ';
+            continue;
+        }            
+        else 
+        {
+            result[i] = (((text[i] - 'a') + (result_key[i] - 'a')) % 26) + 'a'; // шифрование
+        }               
     }
-    encryptedText[i] = '\0';  // Завершаем строку зашифрованным текстом
+    result[i] = '\0';  // Завершаем строку зашифрованным текстом
 
     // Вывод
-    printf("\nРезультат: %s\n", encryptedText);
+    printf("\nРезультат: %s\n", result);
+
+    scanf("%*[^\n]");
+    scanf("%*c");
 
     return 1;
+
 }
 
 
