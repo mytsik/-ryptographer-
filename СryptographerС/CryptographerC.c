@@ -26,21 +26,18 @@ int Vigenere()
     fgets(key, LEN, stdin);
     key[strcspn(key, "\n")] = '\0';  // Удаляем символ новой строки, если он есть
 
+
+
     int text_len = strlen(text);
     int key_len = strlen(key);
     
     char not_letters[] = " #$%&*+-=?@^_,./0123456789!";
 
-    char result_key[] = "";
-    char result[] = "";
-
-    //int res_key_len = strlen(result_key);
-    //for (int i = 0; i < res_key_len; i++) // удаляю символы М
-    //    result_key[i] = '\0';
-
-    int i, j;
+    char result_key[SIZE];
+    char result[SIZE];
+      
     // Новый ключ
-    for (i = 0, j = 0; i < text_len; ++i) 
+    for (int i = 0, j = 0; i < text_len; i++) 
     {
         if (j == key_len)  
             j = 0; //если дошли до конца ключа то начать сначала
@@ -48,18 +45,19 @@ int Vigenere()
         char text_i[] = { text[i] , '\0' };
 
         if (strstr(not_letters, text_i))
-            strcat(result_key, text_i);
+            //strcat(result_key, text_i);
+            result_key[i] = text[i];
         else
         {
-            char key_j[] = { key[j] , '\0' };
-            strcat(result_key, key_j);
+            //char key_j[] = { key[j] , '\0' };
+            //strcat(result_key, key_j);
+            result_key[i] = key[j];
             j += 1;
         }                          
     }
-    result_key[i] = '\0';
+    result_key[text_len] = '\0';
       
-    int k;
-    for (k = 0; k < text_len; ++k)
+    for (int k = 0; k < text_len; k++)
     {       
         char text_k[] = { text[k] , '\0' };
 
@@ -68,16 +66,12 @@ int Vigenere()
         else
             result[k] = text[k];
     }
-    result[k] = '\0';  
+    result[text_len] = '\0';
 
     // Вывод
-    printf("\nРезультат: %s\n", result);
+    printf("\nРезультат: %s\n", result);    
 
-    scanf("%*[^\n]");
-    scanf("%*c");
-
-    return 1;
-
+    return 0;
 }
 
 
