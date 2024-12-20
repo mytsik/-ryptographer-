@@ -29,6 +29,7 @@ int Vigenere()
     int text_len = strlen(text);
     int key_len = strlen(key);
     
+    char not_letters[] = " #$%&*+-=?@^_,./0123456789!";
 
     char result_key[] = "";
     char result[] = "";
@@ -44,32 +45,30 @@ int Vigenere()
         if (j == key_len)  
             j = 0; //если дошли до конца ключа то начать сначала
 
-        if (text[i] != ' ')
+        char text_i[] = { text[i] , '\0' };
+
+        if (strstr(not_letters, text_i))
+            strcat(result_key, text_i);
+        else
         {
             char key_j[] = { key[j] , '\0' };
             strcat(result_key, key_j);
             j += 1;
-        }
-        else
-            strcat(result_key, " ");       
+        }                          
     }
     result_key[i] = '\0';
       
+    int k;
+    for (k = 0; k < text_len; ++k)
+    {       
+        char text_k[] = { text[k] , '\0' };
 
-    // Шифровка
-    for (i = 0; i < text_len; i++) 
-    {
-        if (text[i] == ' ')
-        {
-            result[i] = ' ';
-            continue;
-        }            
-        else 
-        {
-            result[i] = (((text[i] - 'a') + (result_key[i] - 'a')) % 26) + 'a'; // шифрование
-        }               
+        if (!strstr(not_letters, text_k))
+            result[k] = (((text[k] - 'a') + (result_key[k] - 'a')) % 26) + 'a'; // шифрование            
+        else
+            result[k] = text[k];
     }
-    result[i] = '\0';  // Завершаем строку зашифрованным текстом
+    result[k] = '\0';  
 
     // Вывод
     printf("\nРезультат: %s\n", result);
@@ -111,7 +110,7 @@ int Caesar()
         char current_char = text[i];
         int added = 0;
 
-        //если символ не явдяется буквой
+        //если символ не является буквой
         for (int t = 0; t < strlen(not_letters); t++)
         {
             if (current_char == not_letters[t])
