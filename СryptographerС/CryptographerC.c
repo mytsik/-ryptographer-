@@ -18,18 +18,19 @@ int Vigenere()
     printf("\n¬ведите текст, который хотите зашифровать:\n");
     char text[LEN];
     fgets(text, LEN, stdin);
-    text[strcspn(text, "\n")] = '\0';  // ”дал€ем символ новой строки, если он есть
+    text[strcspn(text, "\n")] = '\0';  //удаление символа новой строки
 
     // ¬вод ключа
     printf("\n¬ведите слово, которое будет использоватьс€ в качестве ключа шифровани€\n");
     char key[LEN];
     fgets(key, LEN, stdin);
-    key[strcspn(key, "\n")] = '\0';  // ”дал€ем символ новой строки, если он есть
-
-
+    key[strcspn(key, "\n")] = '\0';  //удаление символа новой строки
 
     int text_len = strlen(text);
     int key_len = strlen(key);
+
+    for (int i = 0; i < key_len; i++) //если в ключе есть прописные буквы то сделать их строчными
+        key[i] = tolower(key[i]);
     
     char not_letters[] = " #$%&*+-=?@^_,./0123456789!";
 
