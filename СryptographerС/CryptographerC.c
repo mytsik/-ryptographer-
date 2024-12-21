@@ -4,7 +4,6 @@
 #include <stdlib.h>
 #include <ctype.h>
 
-#define LEN 81
 #define SIZE 1000
 
 int OverUnderBorder(int length, int index) //когда нужный индекс выходит за пределы массива алфавита
@@ -12,18 +11,41 @@ int OverUnderBorder(int length, int index) //когда нужный индекс выходит за пред
     return (index + length) % length;
 }
 
-int Vigenere()
-{
 
+int Atbash()
+{
     printf("\nВведите текст, который хотите зашифровать:\n");
-    char text[LEN];
-    fgets(text, LEN, stdin);
+    char text[SIZE];
+    fgets(text, SIZE, stdin);
     text[strcspn(text, "\n")] = '\0';  //удаление символа новой строки
 
-    // Ввод ключа
+    int text_len = strlen(text);
+
+    for (int i = 0; i < text_len; i++)
+    {
+        if (isalpha(text[i])) 
+        {
+            if (isupper(text[i])) 
+                text[i] = 'A' + ('Z' - text[i]);
+            else if (islower(text[i])) 
+                text[i] = 'a' + ('z' - text[i]);
+        }
+    }
+    text[text_len] = '\0';
+    printf("\nРезультат: %s\n", text);
+    return 1;
+}
+
+int Vigenere()
+{
+    printf("\nВведите текст, который хотите зашифровать:\n");
+    char text[SIZE];
+    fgets(text, SIZE, stdin);
+    text[strcspn(text, "\n")] = '\0';  //удаление символа новой строки
+
     printf("\nВведите слово, которое будет использоваться в качестве ключа шифрования\n");
-    char key[LEN];
-    fgets(key, LEN, stdin);
+    char key[SIZE];
+    fgets(key, SIZE, stdin);
     key[strcspn(key, "\n")] = '\0';  //удаление символа новой строки
 
     int text_len = strlen(text);
@@ -37,7 +59,7 @@ int Vigenere()
     char result_key[SIZE];
     char result[SIZE];
       
-    // Новый ключ
+    // итоговый ключ
     for (int i = 0, j = 0; i < text_len; i++) 
     {
         if (j == key_len)  
@@ -46,12 +68,9 @@ int Vigenere()
         char text_i[] = { text[i] , '\0' };
 
         if (strstr(not_letters, text_i))
-            //strcat(result_key, text_i);
             result_key[i] = text[i];
         else
         {
-            //char key_j[] = { key[j] , '\0' };
-            //strcat(result_key, key_j);
             result_key[i] = key[j];
             j += 1;
         }                          
@@ -69,10 +88,9 @@ int Vigenere()
     }
     result[text_len] = '\0';
 
-    // Вывод
     printf("\nРезультат: %s\n", result);    
 
-    return 0;
+    return 1;
 }
 
 
@@ -234,6 +252,25 @@ void main()
                 Vigenere();
 
                 printf("\nПродолжить пользоваться шифром Виженера? (Да - 1, нет - 0)\n");
+                scanf_s("%d", &cont);
+                if (cont == 0)
+                    break;
+            }
+            break;
+        }
+        case 3:
+        {
+            while (1)
+            {
+                //очистка буфера
+                scanf("%*[^\n]");
+                scanf("%*c");
+
+                int cont;
+
+                Atbash();
+
+                printf("\nПродолжить пользоваться шифром Атбаш? (Да - 1, нет - 0)\n");
                 scanf_s("%d", &cont);
                 if (cont == 0)
                     break;
