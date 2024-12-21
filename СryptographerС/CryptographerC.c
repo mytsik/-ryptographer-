@@ -57,7 +57,6 @@ int Vigenere()
     char not_letters[] = " #$%&*+-=?@^_,./0123456789!";
 
     char result_key[SIZE];
-    char result[SIZE];
       
     // итоговый ключ
     for (int i = 0, j = 0; i < text_len; i++) 
@@ -82,20 +81,20 @@ int Vigenere()
         char text_k[] = { text[k] , '\0' };
 
         if (!strstr(not_letters, text_k))
-            result[k] = (((text[k] - 'a') + (result_key[k] - 'a')) % 26) + 'a'; // шифрование            
-        else
-            result[k] = text[k];
+            text[k] = (((text[k] - 'a') + (result_key[k] - 'a')) % 26) + 'a'; // шифрование                    
     }
-    result[text_len] = '\0';
+    text[text_len] = '\0';
 
-    printf("\nРезультат: %s\n", result);    
+    printf("\nРезультат: %s\n", text);    
 
     return 1;
 }
 
 
 int Caesar()
-{    
+{
+    setlocale(LC_ALL, "RUS");
+
     const char* eng_lower = "abcdefghijklmnopqrstuvwxyz";
     const char* eng_upper = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
     const char* rus_lower = "абвгдежзийклмнопрстуфхцчшщъыьэюя";
@@ -159,9 +158,8 @@ int Caesar()
                 }
             }
         }
-
-        // Обработка русских букв
-        /*if (strchr(rus_lower, current_char) || strchr(rus_upper, current_char))
+        
+        if (strchr(rus_lower, current_char) || strchr(rus_upper, current_char)) //русские буквы
         {
             for (int j = 0; j < rus_length; j++)
             {
@@ -169,39 +167,23 @@ int Caesar()
 
                 if (current_char == rus_upper[j])
                 {
-                    if (sum_id >= rus_length)
-                    {
-                        result[result_index++] = rus_upper[OverBorder(rus_length, sum_id)];
-                    }
-                    else if (sum_id < 0)
-                    {
-                        result[result_index++] = rus_upper[UnderBorder(rus_length, sum_id)];
-                    }
+                    if ((sum_id >= rus_length)||(sum_id < 0))
+                        result[result_index++] = rus_upper[OverUnderBorder(rus_length, sum_id)];
                     else
-                    {
                         result[result_index++] = rus_upper[sum_id];
-                    }
                     break;
                 }
 
                 if (current_char == rus_lower[j])
                 {
-                    if (sum_id >= rus_length)
-                    {
-                        result[result_index++] = rus_lower[OverBorder(rus_length, sum_id)];
-                    }
-                    else if (sum_id < 0)
-                    {
-                        result[result_index++] = rus_lower[UnderBorder(rus_length, sum_id)];
-                    }
+                    if ((sum_id >= rus_length) || (sum_id < 0))
+                        result[result_index++] = rus_lower[OverUnderBorder(rus_length, sum_id)];
                     else
-                    {
                         result[result_index++] = rus_lower[sum_id];
-                    }
                     break;
                 }
             }
-        }*/
+        }
     }
 
     result[result_index] = '\0';
@@ -214,70 +196,79 @@ void main()
 {
 	setlocale(LC_ALL, "RUS");
 
-	int choice;
-	printf("Выберите метод шифрования(введите цифру):\n1 - Шифр Цезаря: шифрует по буквам алфавита\n2 - Шифр Виженера: шифрует с помощью ключа\n3 - Шифр Атбаш: шифрует в обратном порядке\n\n");
-	scanf_s("%d", &choice);
+    while (1) 
+    {
+        printf("\033[0d\033[2J"); //очистка консоли
 
-	switch (choice)
-	{
-		case 1:
-        {            
-            while (1)
-            {
-                //очистка буфера
-                scanf("%*[^\n]");
-                scanf("%*c");
+        int choice;
+        printf("Выберите метод шифрования(введите цифру):\n1 - Шифр Цезаря: шифрует по буквам алфавита\n2 - Шифр Виженера: шифрует с помощью ключа\n3 - Шифр Атбаш: шифрует в обратном порядке\n\nЧтобы выйти введите 0\n\n");
+        scanf_s("%d", &choice);
 
-                int cont;
-                                
-                Caesar();
-
-                printf("\nПродолжить пользоваться шифром Цезаря? (Да - 1, нет - 0)\n");
-                scanf_s("%d", &cont);
-                if (cont == 0)
-                    break;
-            } 
-            break;
-        }
-        case 2:
+        switch (choice)
         {
-            while (1)
+            case 1:
             {
-                //очистка буфера
-                scanf("%*[^\n]");
-                scanf("%*c");
+                while (1)
+                {
+                    //очистка буфера
+                    scanf("%*[^\n]");
+                    scanf("%*c");
 
-                int cont;
+                    int cont;
 
-                Vigenere();
+                    Caesar();
 
-                printf("\nПродолжить пользоваться шифром Виженера? (Да - 1, нет - 0)\n");
-                scanf_s("%d", &cont);
-                if (cont == 0)
-                    break;
+                    printf("\nПродолжить пользоваться шифром Цезаря? (Да - 1, нет - 0)\n");
+                    scanf_s("%d", &cont);
+                    if (cont == 0)
+                        break;
+                }
+                break;
             }
-            break;
-        }
-        case 3:
-        {
-            while (1)
+            case 2:
             {
-                //очистка буфера
-                scanf("%*[^\n]");
-                scanf("%*c");
+                while (1)
+                {
+                    //очистка буфера
+                    scanf("%*[^\n]");
+                    scanf("%*c");
 
-                int cont;
+                    int cont;
 
-                Atbash();
+                    Vigenere();
 
-                printf("\nПродолжить пользоваться шифром Атбаш? (Да - 1, нет - 0)\n");
-                scanf_s("%d", &cont);
-                if (cont == 0)
-                    break;
+                    printf("\nПродолжить пользоваться шифром Виженера? (Да - 1, нет - 0)\n");
+                    scanf_s("%d", &cont);
+                    if (cont == 0)
+                        break;
+                }
+                break;
             }
-            break;
+            case 3:
+            {
+                while (1)
+                {
+                    //очистка буфера
+                    scanf("%*[^\n]");
+                    scanf("%*c");                    
+
+                    int cont;
+
+                    Atbash();
+
+                    printf("\nПродолжить пользоваться шифром Атбаш? (Да - 1, нет - 0)\n");
+                    scanf_s("%d", &cont);
+                    if (cont == 0)
+                        break;
+                }
+                break;
+            }
+            case 0:
+                break;
+            default:
+                printf("Введенный вами вариант отсутствует\n");            
         }
-        default:
-            printf("Введенный вами вариант отсутствует\n");
-	}
+        if (choice == 0)
+            break;
+    }      
 }
