@@ -3,6 +3,7 @@
 #include <string.h>
 #include <stdlib.h>
 #include <ctype.h>
+#include <Windows.h> // ќб€зательно дл€ SetConsoleCP() и SetConsoleOutputCP()
 
 #define SIZE 1000
 
@@ -38,6 +39,12 @@ int Atbash()
 
 int Vigenere()
 {
+    char eng_lower[] = "abcdefghijklmnopqrstuvwxyz";
+    char eng_upper[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+    char rus_lower[] = "абвгдежзийклмнопрстуфхцчшщъыьэю€";
+    char rus_upper[] = "јЅ¬√ƒ≈∆«»… ЋћЌќѕ–—“”‘’÷„ЎўЏџ№Ёёя";
+    char not_letters[] = " #$%&*+-=?@^_,./0123456789!";
+
     printf("\n¬ведите текст, который хотите зашифровать:\n");
     char text[SIZE];
     fgets(text, SIZE, stdin);
@@ -52,10 +59,8 @@ int Vigenere()
     int key_len = strlen(key);
 
     for (int i = 0; i < key_len; i++) //если в ключе есть прописные буквы то сделать их строчными
-        key[i] = tolower(key[i]);
+        key[i] = tolower(key[i]);   
     
-    char not_letters[] = " #$%&*+-=?@^_,./0123456789!";
-
     char result_key[SIZE];
       
     // итоговый ключ
@@ -75,13 +80,24 @@ int Vigenere()
         }                          
     }
     result_key[text_len] = '\0';
-      
+    
+    
     for (int k = 0; k < text_len; k++)
     {       
         char text_k[] = { text[k] , '\0' };
-
-        if (!strstr(not_letters, text_k))
-            text[k] = (((text[k] - 'a') + (result_key[k] - 'a')) % 26) + 'a'; // шифрование                    
+        char current_char = text[k];
+        
+        if (!strstr(not_letters, text_k)) 
+        {
+            if (strchr(eng_lower, current_char) || strchr(eng_upper, current_char)) //английские буквы
+            {
+                text[k] = (((text[k] - 'a') + (result_key[k] - 'a')) % 26) + 'a'; // шифрование
+            }                
+            else if (strchr(rus_lower, current_char) || strchr(rus_upper, current_char)) //русские буквы
+            {
+                text[k] = (((text[k] - 'а') + (result_key[k] - 'а')) % 32) + 'а'; // шифрование
+            }                
+        }                               
     }
     text[text_len] = '\0';
 
@@ -93,13 +109,13 @@ int Vigenere()
 
 int Caesar()
 {
-    setlocale(LC_ALL, "RUS");
+    //setlocale(LC_ALL, "RUS");
 
-    const char* eng_lower = "abcdefghijklmnopqrstuvwxyz";
-    const char* eng_upper = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-    const char* rus_lower = "абвгдежзийклмнопрстуфхцчшщъыьэю€";
-    const char* rus_upper = "јЅ¬√ƒ≈∆«»… ЋћЌќѕ–—“”‘’÷„ЎўЏџ№Ёёя";
-    const char* not_letters = " #$%&*+-=?@^_,./0123456789!";
+    char eng_lower[] = "abcdefghijklmnopqrstuvwxyz";
+    char eng_upper[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+    char rus_lower[] = "абвгдежзийклмнопрстуфхцчшщъыьэю€";
+    char rus_upper[] = "јЅ¬√ƒ≈∆«»… ЋћЌќѕ–—“”‘’÷„ЎўЏџ№Ёёя";
+    char not_letters[] = " #$%&*+-=?@^_,./0123456789!";
 
     // длины алфавитов
     int eng_length = strlen(eng_lower);
@@ -133,9 +149,10 @@ int Caesar()
             }
         }
 
+        int j;
         if (strchr(eng_lower, current_char) || strchr(eng_upper, current_char)) //английские буквы
         {
-            for (int j = 0; j < eng_length; j++)
+            for (j = 0; j < eng_length; j++)
             {
                 int sum_id = step + j;
 
@@ -161,7 +178,7 @@ int Caesar()
         
         if (strchr(rus_lower, current_char) || strchr(rus_upper, current_char)) //русские буквы
         {
-            for (int j = 0; j < rus_length; j++)
+            for (j = 0; j < rus_length; j++)
             {
                 int sum_id = step + j;
 
@@ -195,6 +212,8 @@ int Caesar()
 void main()
 {
 	setlocale(LC_ALL, "RUS");
+    SetConsoleCP(1251);
+    SetConsoleOutputCP(1251);
 
     while (1) 
     {
