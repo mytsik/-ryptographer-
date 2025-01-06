@@ -3,37 +3,61 @@
 #include <string.h>
 #include <stdlib.h>
 #include <ctype.h>
-#include <Windows.h> // ќб€зательно дл€ SetConsoleCP() и SetConsoleOutputCP()
-
+#include <Windows.h> 
+#include <time.h>
 #define SIZE 1000
 
-int OverUnderBorder(int length, int index) //когда нужный индекс выходит за пределы массива алфавита
+int OverUnderBorder(int length, int index) //когда нужный индекс выходит за пределы длины алфавита
 {
     return (index + length) % length;
 }
 
-
 int Atbash()
 {
+    char eng_lower[] = "abcdefghijklmnopqrstuvwxyz";
+    char eng_upper[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+    char rus_lower[] = "абвгдежзийклмнопрстуфхцчшщъыьэю€";
+    char rus_upper[] = "јЅ¬√ƒ≈∆«»… ЋћЌќѕ–—“”‘’÷„ЎўЏџ№Ёёя";
+    char not_letters[] = " #$%&*+-=?@^_,./0123456789!";
+
     printf("\n¬ведите текст, который хотите зашифровать:\n");
     char text[SIZE];
     fgets(text, SIZE, stdin);
     text[strcspn(text, "\n")] = '\0';  //удаление символа новой строки
 
+    clock_t time_start = clock();
     int text_len = strlen(text);
 
     for (int i = 0; i < text_len; i++)
     {
-        if (isalpha(text[i])) 
-        {
-            if (isupper(text[i])) 
-                text[i] = 'A' + ('Z' - text[i]);
-            else if (islower(text[i])) 
-                text[i] = 'a' + ('z' - text[i]);
+        char text_i[] = { text[i] , '\0' };
+        
+       
+        if (!strstr(not_letters, text_i))
+        {   
+            char current_char = text[i];
+            if (strchr(eng_lower, current_char) || strchr(eng_upper, current_char)) //английские буквы
+            {
+                if (isupper(current_char))
+                    text[i] = 'A' + ('Z' - text[i]);
+                else 
+                    text[i] = 'a' + ('z' - text[i]);                
+            }            
+            else
+            {
+                if (isupper(current_char))
+                    text[i] = 'ј' + ('я' - text[i]);
+                else 
+                    text[i] = 'а' + ('€' - text[i]);
+            }                       
         }
     }
     text[text_len] = '\0';
     printf("\n–езультат: %s\n", text);
+
+    clock_t time_end = clock() - time_start;
+    double time_result = (double)time_end / CLOCKS_PER_SEC;
+    printf("\n¬рем€ выполнени€: %.3lf секунд\n", time_result);
     return 1;
 }
 
@@ -55,10 +79,12 @@ int Vigenere()
     fgets(key, SIZE, stdin);
     key[strcspn(key, "\n")] = '\0';  //удаление символа новой строки
 
+    clock_t time_start = clock();
+
     int text_len = strlen(text);
     int key_len = strlen(key);
 
-    for (int i = 0; i < key_len; i++) //если в ключе есть прописные буквы то сделать их строчными
+    for (int i = 0; i < key_len; i++) //если в ключе есть прописные буквы, то сделать их строчными
         key[i] = tolower(key[i]);   
     
     char result_key[SIZE];
@@ -67,7 +93,7 @@ int Vigenere()
     for (int i = 0, j = 0; i < text_len; i++) 
     {
         if (j == key_len)  
-            j = 0; //если дошли до конца ключа то начать сначала
+            j = 0; //если дошли до конца ключа, то начать сначала
 
         char text_i[] = { text[i] , '\0' };
 
@@ -81,7 +107,6 @@ int Vigenere()
     }
     result_key[text_len] = '\0';
     
-    
     for (int k = 0; k < text_len; k++)
     {       
         char text_k[] = { text[k] , '\0' };
@@ -90,27 +115,26 @@ int Vigenere()
         if (!strstr(not_letters, text_k)) 
         {
             if (strchr(eng_lower, current_char) || strchr(eng_upper, current_char)) //английские буквы
-            {
-                text[k] = (((text[k] - 'a') + (result_key[k] - 'a')) % 26) + 'a'; // шифрование
-            }                
-            else if (strchr(rus_lower, current_char) || strchr(rus_upper, current_char)) //русские буквы
-            {
-                text[k] = (((text[k] - 'а') + (result_key[k] - 'а')) % 32) + 'а'; // шифрование
-            }                
+                text[k] = (((text[k] - 'a') + (result_key[k] - 'a')) % 26) + 'a'; // шифрование 
+
+            if (strchr(rus_lower, current_char) || strchr(rus_upper, current_char)) //русские буквы
+                text[k] = (((text[k] - 'а') + (result_key[k] - 'а')) % 32) + 'а'; // шифрование                
         }                               
     }
     text[text_len] = '\0';
 
-    printf("\n–езультат: %s\n", text);    
+    printf("\n–езультат: %s\n", text); 
+
+    clock_t time_end = clock() - time_start;
+    double time_result = (double)time_end / CLOCKS_PER_SEC;
+    printf("\n¬рем€ выполнени€: %.3lf секунд\n", time_result);
 
     return 1;
 }
 
 
 int Caesar()
-{
-    //setlocale(LC_ALL, "RUS");
-
+{ 
     char eng_lower[] = "abcdefghijklmnopqrstuvwxyz";
     char eng_upper[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
     char rus_lower[] = "абвгдежзийклмнопрстуфхцчшщъыьэю€";
@@ -126,12 +150,13 @@ int Caesar()
 
     char text[SIZE];
     printf("\n¬ведите текст, который хотите зашифровать:\n");
-    fgets(text, sizeof(text), stdin); // \n по€вл€етс€ после этого до считывани€ step      
+    fgets(text, sizeof(text), stdin);      
 
     int step;
     printf("\n¬ведите значение дл€ сдвига(отрицательное значение дл€ сдвига влево, положительное значение дл€ сдвига вправо):\n");
     scanf_s("%d", &step);
-    
+
+    clock_t time_start = clock(); //засекание времени
     // обработка каждого символа
     for (int i = 0; i < strlen(text); i++)
     {
@@ -205,6 +230,10 @@ int Caesar()
 
     result[result_index] = '\0';
     printf("\n–езультат: %s\n", result);
+
+    clock_t time_end = clock() - time_start;
+    double time_result = (double)time_end / CLOCKS_PER_SEC;
+    printf("\n¬рем€ выполнени€: %.3lf секунд\n", time_result);
 
     return 1;
 }
